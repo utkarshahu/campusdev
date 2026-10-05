@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0A0B14">
+  <title>Code Duel — Coding Arena</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+  <div class="app-shell">
+    <header class="topbar glass">
+      <div class="brand-block">
+        <div class="brand-mark">&lt;/&gt;</div>
+        <div><strong>Code<span>Duel</span></strong><small>LIVE CODING ARENA</small></div>
+      </div>
+      <div class="duel-head">
+        <div class="player"><div class="avatar you">Y</div><div><span>You</span><small>Coder</small></div></div>
+        <div class="versus">VS</div>
+        <div class="player opponent"><div><span>Opponent</span><small><i class="online-dot"></i> Online</small></div><div class="avatar opp">O</div></div>
+      </div>
+      <div class="top-actions">
+        <div class="timer-card panel"><span class="eyebrow">TIME LEFT</span><strong id="timer">05:00</strong><small>5 min / question</small></div>
+        <div class="score-card panel"><span class="eyebrow">OPPONENT SCORE</span><div><strong id="score">8</strong><em>/10</em></div><div class="score-track"><i style="width:80%"></i></div></div>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="editor-panel glass">
+        <div class="editor-toolbar">
+          <div class="toolbar-left">
+            <div class="language-select-wrap">
+              <span class="lang-dot" id="langDot"></span>
+              <select id="languageSelect" aria-label="Programming language">
+                {% for lang in languages %}<option value="{{ lang.id }}">{{ lang.name }}</option>{% endfor %}
+              </select><span class="select-chevron">⌄</span>
+            </div>
+            <span class="autosave"><i></i> Saved</span>
+          </div>
+          <div class="toolbar-actions">
+            <button class="icon-btn" id="fontDown" title="Decrease font">A−</button>
+            <button class="icon-btn" id="fontUp" title="Increase font">A+</button>
+            <button class="icon-btn" id="formatBtn" title="Format">✦</button>
+            <button class="icon-btn" id="resetBtn" title="Reset">↻</button>
+            <button class="run-btn" id="runBtn"><span>▶</span> Run</button>
+          </div>
+        </div>
+
+        <div class="problem-strip">
+          <div class="problem-meta"><span class="q-number">Q<span id="currentNo">1</span></span><strong id="problemTitle">Two Sum</strong><span id="difficulty" class="difficulty easy">Easy</span><span class="tag">Arrays</span></div>
+          <button class="problem-toggle" id="problemToggle">Problem <span>↗</span></button>
+        </div>
+
+        <div class="code-area">
+          <div class="editor-wrap">
+            <div class="line-numbers" id="lineNumbers">1</div>
+            <textarea id="code" spellcheck="false" autocapitalize="off" autocomplete="off">def two_sum(nums, target):
+    # Write your solution here
+    pass
+
+
+print(two_sum([2, 7, 11, 15], 9))</textarea>
+            <div class="editor-status"><span id="cursorPos">Ln 1, Col 1</span><span id="languageStatus">Python</span><span>UTF-8</span></div>
+          </div>
+          <div class="resize-handle" id="resizeHandle" title="Drag to resize output"></div>
+          <section class="console" id="console">
+            <div class="console-head">
+              <div class="console-tabs"><button class="console-tab active" data-tab="output">OUTPUT</button><button class="console-tab" data-tab="input">CUSTOM INPUT</button></div>
+              <div class="console-actions"><span id="runStatus">Ready</span><button id="clearOutput">Clear</button></div>
+            </div>
+            <div class="console-body">
+              <pre id="output">Run your code to see the output here.</pre>
+              <textarea id="customInput" class="hidden-input" placeholder="Optional stdin input..."></textarea>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <aside class="questions-panel glass" id="questionsPanel">
+        <div class="questions-head">
+          <div><span class="eyebrow">DUEL QUEUE</span><h1>Questions</h1></div>
+          <span class="count-badge">{{ questions|length }}</span>
+        </div>
+        <div class="progress"><span id="queueProgress" style="width:33%"></span></div>
+        <div class="question-list" id="questionList">
+          {% for q in questions %}
+          <button class="question-item {% if loop.first %}active{% endif %}" data-id="{{ q.id }}" data-title="{{ q.title }}" data-difficulty="{{ q.difficulty }}" data-prompt="{{ q.prompt }}" data-tag="{{ q.tag }}">
+            <div class="q-left"><span class="q-check">{% if loop.first %}✓{% else %}{{ loop.index }}{% endif %}</span><div><strong>Q{{ loop.index }}. {{ q.title }}</strong><small>{{ q.prompt }}</small></div></div><span class="item-arrow">›</span>
+          </button>
+          {% endfor %}
+        </div>
+        <div class="opponent-status"><span class="online-dot"></span><div><strong>Opponent is coding</strong><small>Last activity · 8 sec ago</small></div><div class="typing-bars"><i></i><i></i><i></i></div></div>
+      </aside>
+    </main>
+  </div>
+
+  <button class="mobile-question-btn" id="mobileQuestionBtn">☷ <span>Questions</span></button>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <div class="modal hidden" id="problemModal"><div class="modal-card glass"><button class="close" id="closeModal">×</button><span class="eyebrow">CURRENT QUESTION</span><h2 id="modalTitle">Two Sum</h2><p id="modalPrompt"></p><div class="example"><span>Example</span><code>nums = [2, 7, 11, 15], target = 9</code><code>Output → [0, 1]</code></div></div></div>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
